@@ -1,51 +1,59 @@
 'use strict';
 
 const express = require('express');
+const mongoose = require('mongoose');
 const morgan = require('morgan');
+const bodyParser = require('body-parser');
 
-//create new express app
+mongoose.Promise = global.Promise;
+
+const {DATABASE_URL, PORT} = require('./config');
+const {blogPosts} = require('./models');
+
 const app = express();
-//export modules in order to use it
-const blogPostRouter = require('./blogPostRouter');
+
 //logs http layer
 app.use(morgan('common'));
-
-app.use('/blog-posts', blogPostRouter);
-
-// app.listen(process.env.PORT || 8080, () => {
-//   console.log(`Your app is listening on port ${process.env.PORT || 8080}`);
-// });
+app.use(bodyParser.json()); //how is this important? 
 
 let server;
 
-function runServer() {
-  const port = process.env.PORT || 8080;
+function runServer(databaseUrl = DATABASE_URL, port=PORT) {
   return new Promise ((resolve, reject) => {
-    server = app.listen(port, () => {
-      console.log(`Your app is listening on port ${port}`);
-      resolve(server);
-    }).on('error', err => {
-      reject(err)
+    mongoose.connect(databaseURL, err => {
+      if(err) {
+        return reject(err);
+      }
+      server = app.listen(port, () => {
+        console.log(`Your app is listening on port ${port}`);
+        resolve();
+      })
+      .on('error',err => {
+        mongoose.disconnect();
+        reject(err);
+      });
     });
   });
 }
 
 function closeServer() {
-  return new Promise((resolve, reject) => {
-    console.log('Closing server');
-    server.close(err => {
-      if(err) {
-        reject(err);
-        return;
-      }
+  return mongoose.disconnect().then(() => {
+    return new Promise ((resolve, reject => {
+      console.log('Closing server');
+      server.close(err => {
+        if (err) {
+          return reject(err);
+        }
       resolve();
+      });
     });
   });
 }
+
 //module refers to server.js 
 //if the require.main === server 
 if (require.main === module) { 
   runServer().catch(err => console.error(err));
 };
 
-module.exports = {app, runServer, closeServer}; //this is main module
+module.exports = {app, runServer, closeServer}; 
