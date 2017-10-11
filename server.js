@@ -8,13 +8,29 @@ const bodyParser = require('body-parser');
 mongoose.Promise = global.Promise;
 
 const {DATABASE_URL, PORT} = require('./config');
-const {blogPosts} = require('./models');
+const {BlogPosts} = require('./models');
 
 const app = express();
 
-//logs http layer
-app.use(morgan('common'));
+app.use(morgan('common')); //logs HTTP layer
 app.use(bodyParser.json()); //how is this important? 
+
+//GET request for entire DB
+app.get('/posts', (req, res) => {
+  BlogPosts
+    .find()
+    .then(posts => {
+      res.json({
+        posts: posts.map((post) => blogPostData.getAuthor());
+      })
+    })
+    .catch(
+      err => {
+        console.error(err);
+        res.status(500).json({message: 'Internal server error'});
+    });
+});
+
 
 let server;
 
