@@ -15,22 +15,10 @@ const app = express();
 app.use(morgan('common')); //logs HTTP layer
 app.use(bodyParser.json()); //how is this important? 
 
-//GET request for entire DB
-app.get('/posts', (req, res) => {
-  BlogPosts
-    .find()
-    .then(posts => {
-      res.json({
-        posts: posts.map((post) => blogPostData.getAuthor());
-      })
-    })
-    .catch(
-      err => {
-        console.error(err);
-        res.status(500).json({message: 'Internal server error'});
-    });
+//what is this for? 
+app.use('*', function(req, res) {
+  res.status(404).json({message: 'Not Found'});
 });
-
 
 let server;
 
