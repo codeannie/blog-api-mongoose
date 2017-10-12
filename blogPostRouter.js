@@ -1,12 +1,8 @@
 'use strict';
 
-//how to convert this from express router? 
 const express = require('express');
-// const bodyParser = require('body-parser');
-// const jsonParser = bodyParser.json();
+const app = express.Router();  //getting router instance & tacking on end points
 const mongoose = require('mongoose');
-
-mongoose.Promise = global.Promise; 
 
 const {BlogPosts} = require('./models');
 
@@ -42,7 +38,7 @@ app.post('/posts', (req, res) => {
  for (let i=0; i<requiredFields.length; i++) {
    const field = requiredFields[i];
    if(!(field in req.body)) {
-     const message = `Missing \`${field}}\` in request body`;
+     const message = `Missing ${field} in request body`;
      console.error(message);
      return res.status(400).send(message);
    }
@@ -56,7 +52,7 @@ app.post('/posts', (req, res) => {
   .then(blogPost => res.status(200).json(blogPost.showAuthor()))
   .catch(err => {
     console.error(err);
-    res.status(500).json({error: `something went wrong`});
+    res.status(500).json({error: 'something went wrong'});
   });
 });
 
@@ -95,3 +91,5 @@ app.delete('/posts/:id', (req, res) {
       res.status(500).json({error: 'internal server error'});
     });
 });
+
+module.exports = app;  //need to be an actual declared variable 
