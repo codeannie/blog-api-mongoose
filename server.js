@@ -3,6 +3,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const morgan = require('morgan');
+const blogPostRouter = require('./blogPostRouter');
 const bodyParser = require('body-parser');
 
 mongoose.Promise = global.Promise;
@@ -13,7 +14,8 @@ const {BlogPosts} = require('./models');
 const app = express();
 
 app.use(morgan('common')); //logs HTTP layer
-app.use(bodyParser.json()); //how is this important? 
+app.use(bodyParser.json()); //look it up 
+app.use('/blog-post', blogPostRouter);
 
 //what is this for? 
 app.use('*', function(req, res) {
