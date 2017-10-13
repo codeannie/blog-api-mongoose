@@ -12,7 +12,7 @@ app.get('/posts', (req, res) => {
     .find()
     .then(posts => {
       res.json({
-        posts: posts.map((post) => blogPostData.getAuthor());
+        posts: posts.map((post) => blogPostData.getAuthor())
       })
     })
     .catch(err => {
@@ -28,32 +28,32 @@ app.get('/posts/:id', (req, res) => {
     .then(post => res.json(post.showAuthor()))
     .catch(err => {
       console.error(err);
-      res.status(500).json({error: 'Get request by id did not work}');
+      res.status(500).json({error: 'Get request by id did not work'});
     });
 });
 
 //POST request
 app.post('/posts', (req, res) => {
- const requiredFields = ['title', 'content', 'author'];
- for (let i=0; i<requiredFields.length; i++) {
-   const field = requiredFields[i];
-   if(!(field in req.body)) {
-     const message = `Missing ${field} in request body`;
-     console.error(message);
-     return res.status(400).send(message);
-   }
- }
- BlogPosts
-  .create({
-    title: req.body.title,
-    content: req.body.content,
-    author: req.body.author
-  })
-  .then(blogPost => res.status(200).json(blogPost.showAuthor()))
-  .catch(err => {
-    console.error(err);
-    res.status(500).json({error: 'something went wrong'});
-  });
+  const requiredFields = ['title', 'content', 'author'];
+  for (let i=0; i<requiredFields.length; i++) {
+    const field = requiredFields[i];
+      if(!(field in req.body)) {
+      const message = `Missing ${field} in request body`;
+      console.error(message);
+      return res.status(400).send(message);
+      }
+  }
+  BlogPosts
+    .create({
+      title: req.body.title,
+      content: req.body.content,
+      author: req.body.author
+    })
+    .then(blogPost => res.status(200).json(blogPost.showAuthor()))
+    .catch(err => {
+      console.error(err);
+      res.status(500).json({error: 'something went wrong'});
+    });
 });
 
 //PUT request by id 
