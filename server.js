@@ -36,10 +36,10 @@ function runServer(databaseUrl = DATABASE_URL, port=PORT) {
         console.log(`Your app is listening on port ${port}`);
         resolve();
       })
-      .on('error',err => {
-        mongoose.disconnect();
-        reject(err);
-      });
+        .on('error',err => {
+          mongoose.disconnect();
+          reject(err);
+        });
     });
   });
 }
@@ -62,6 +62,6 @@ function closeServer() {
 //if the require.main === server 
 if (require.main === module) { 
   runServer().catch(err => console.error(err));
-};
+}
 
 module.exports = {app, runServer, closeServer}; 
