@@ -14,7 +14,7 @@ const {BlogPosts} = require('./models');
 const app = express();
 
 app.use(morgan('common')); //logs HTTP layer
-app.use(bodyParser.json()); //look it up 
+app.use(bodyParser.json()); //look this up with Google sensei 
 app.use('/blog-post', blogPostRouter);
 
 //what is this for? 
@@ -26,10 +26,12 @@ let server;
 
 function runServer(databaseUrl = DATABASE_URL, port=PORT) {
   return new Promise ((resolve, reject) => {
+    //using mongoose to connect to database
     mongoose.connect(databaseURL, err => {
       if(err) {
         return reject(err);
       }
+      //telling express to listen for request in port 
       server = app.listen(port, () => {
         console.log(`Your app is listening on port ${port}`);
         resolve();
@@ -44,13 +46,13 @@ function runServer(databaseUrl = DATABASE_URL, port=PORT) {
 
 function closeServer() {
   return mongoose.disconnect().then(() => {
-    return new Promise ((resolve, reject => {
+    return new Promise ((resolve, reject) => {
       console.log('Closing server');
       server.close(err => {
         if (err) {
           return reject(err);
         }
-      resolve();
+        resolve();
       });
     });
   });
